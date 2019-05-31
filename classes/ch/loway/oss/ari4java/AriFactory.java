@@ -5,6 +5,8 @@ package ch.loway.oss.ari4java;
 
 import ch.loway.oss.ari4java.tools.ARIException;
 import ch.loway.oss.ari4java.tools.http.NettyHttpClient;
+import ch.loway.oss.ari4java.tools.http.NettyHttpClientQuick;
+
 import java.net.URISyntaxException;
 
 /**
@@ -48,6 +50,22 @@ public class AriFactory {
         ARI ari = new ARI();
         ari.setAppName(app);
         NettyHttpClient hc = new NettyHttpClient();
+
+        ari.setHttpClient(hc);
+        ari.setWsClient(hc);
+
+        ari.setVersion(version);
+
+        hc.initialize(uri, login, pass);
+        return ari;
+    }
+    public static ARI nettyHttpQuick(String uri, String login, String pass, AriVersion version) throws ARIException, URISyntaxException {
+        return nettyHttpQuick(uri, login, pass, version, "");
+    }
+    public static ARI nettyHttpQuick(String uri, String login, String pass, AriVersion version, String app) throws ARIException, URISyntaxException {
+        ARI ari = new ARI();
+        ari.setAppName(app);
+        NettyHttpClient hc = new NettyHttpClientQuick();
 
         ari.setHttpClient(hc);
         ari.setWsClient(hc);

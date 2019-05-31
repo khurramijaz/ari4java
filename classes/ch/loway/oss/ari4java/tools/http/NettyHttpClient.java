@@ -44,22 +44,22 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
 
     public static final int MAX_HTTP_REQUEST_KB = 16 * 1024;
     
-    private Bootstrap bootStrap;
-    private URI baseUri;
-    private EventLoopGroup group;
-    private EventLoopGroup shutDownGroup;
-    private String username;
-    private String password;
+    protected Bootstrap bootStrap;
+    protected URI baseUri;
+    protected EventLoopGroup group;
+    protected EventLoopGroup shutDownGroup;
+    protected String username;
+    protected String password;
 
-    private HttpResponseHandler wsCallback;
-    private String wsEventsUrl;
-    private List<HttpParam> wsEventsParamQuery;
-    private WsClientConnection wsClientConnection;
-    private int reconnectCount = 0;
-    private ChannelFuture wsChannelFuture;
-    private ScheduledFuture<?> wsPingTimer = null;
-    private NettyWSClientHandler wsHandler;
-    private ChannelFutureListener wsFuture;
+    protected HttpResponseHandler wsCallback;
+    protected String wsEventsUrl;
+    protected List<HttpParam> wsEventsParamQuery;
+    protected WsClientConnection wsClientConnection;
+    protected int reconnectCount = 0;
+    protected ChannelFuture wsChannelFuture;
+    protected ScheduledFuture<?> wsPingTimer = null;
+    protected NettyWSClientHandler wsHandler;
+    protected ChannelFutureListener wsFuture;
 
     public NettyHttpClient() {
         group = new NioEventLoopGroup();
@@ -116,7 +116,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
         }, 250L, TimeUnit.MILLISECONDS);
     }
 
-    private String buildURL(String path, List<HttpParam> parametersQuery, boolean withAddress) throws UnsupportedEncodingException {
+    protected String buildURL(String path, List<HttpParam> parametersQuery, boolean withAddress) throws UnsupportedEncodingException {
         StringBuilder uriBuilder = new StringBuilder();
         if (withAddress) {
             uriBuilder.append(baseUri);
@@ -143,7 +143,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
     }
 
     // Factory for WS handshakes
-    private WebSocketClientHandshaker getWsHandshake(String path, List<HttpParam> parametersQuery) throws UnsupportedEncodingException {
+    protected WebSocketClientHandshaker getWsHandshake(String path, List<HttpParam> parametersQuery) throws UnsupportedEncodingException {
         String url = buildURL(path, parametersQuery, true);
         try {
             if (url.regionMatches(true, 0, "http", 0, 4)) {
@@ -160,7 +160,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
     }
 
     // Build the HTTP request based on the given parameters
-    private HttpRequest buildRequest(String path, String method, List<HttpParam> parametersQuery, List<HttpParam> parametersForm, List<HttpParam> parametersBody) throws UnsupportedEncodingException {
+    protected HttpRequest buildRequest(String path, String method, List<HttpParam> parametersQuery, List<HttpParam> parametersForm, List<HttpParam> parametersBody) throws UnsupportedEncodingException {
         String url = buildURL(path, parametersQuery, false);
         FullHttpRequest request = new DefaultFullHttpRequest(
                 HttpVersion.HTTP_1_1, HttpMethod.valueOf(method), url);
@@ -178,7 +178,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
         return request;
     }
 
-    private String makeBodyVariables(List<HttpParam> variables) {
+    protected String makeBodyVariables(List<HttpParam> variables) {
         StringBuilder varBuilder = new StringBuilder();
         varBuilder.append("{").append("\"variables\": {");
         Iterator<HttpParam> entryIterator = variables.iterator();
@@ -194,7 +194,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
         return varBuilder.toString();
     }
 
-    private RestException makeException(HttpResponseStatus status, String response, List<HttpResponse> errors) {
+    protected RestException makeException(HttpResponseStatus status, String response, List<HttpResponse> errors) {
         
         if (status == null ) {            
             return new RestException("Shutdown: " + response);
@@ -336,7 +336,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
         return createWsClientConnection();
     }
 
-    private void startPing() {
+    protected void startPing() {
         if (wsPingTimer == null) {
             wsPingTimer = group.scheduleAtFixedRate(new Runnable() {
                 @Override
@@ -352,7 +352,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
         }
     }
 
-    private WsClientConnection createWsClientConnection() {
+    protected WsClientConnection createWsClientConnection() {
         if (this.wsClientConnection == null) {
             this.wsClientConnection = new WsClientConnection() {
 
@@ -381,7 +381,7 @@ public class NettyHttpClient implements HttpClient, WsClient, WsClientAutoReconn
      * @param status
      * @return whether it is a 2XX code or not (error!)
      */
-    private boolean httpResponseOkay(HttpResponseStatus status) {
+    protected boolean httpResponseOkay(HttpResponseStatus status) {
 
         if (HttpResponseStatus.OK.equals(status)
                 || HttpResponseStatus.NO_CONTENT.equals(status)

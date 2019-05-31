@@ -43,16 +43,16 @@ import java.util.regex.Pattern;
  */
 public class ARI {
 
-    private final static String ALLOWED_IN_UID = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    protected final static String ALLOWED_IN_UID = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         
-    private String appName = "";
-    private String url = "";
-    private AriVersion version;
-    private HttpClient httpClient;
-    private WsClient wsClient;
-    private ActionEvents liveActionEvent = null;
-    private AriSubscriber subscriptions = new AriSubscriber();
-    private final CopyOnWriteArrayList<BaseAriAction> liveActionList = new CopyOnWriteArrayList<>();
+    protected String appName = "";
+    protected String url = "";
+    protected AriVersion version;
+    protected HttpClient httpClient;
+    protected WsClient wsClient;
+    protected ActionEvents liveActionEvent = null;
+    protected AriSubscriber subscriptions = new AriSubscriber();
+    protected final CopyOnWriteArrayList<BaseAriAction> liveActionList = new CopyOnWriteArrayList<>();
 
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
@@ -133,7 +133,7 @@ public class ARI {
      * @throws ARIException 
      */
         
-    private Object buildConcreteImplementation(Class klazz) throws ARIException {
+    protected Object buildConcreteImplementation(Class klazz) throws ARIException {
 
         if (version == null) {
             throw new ARIException("API version not set");
@@ -277,7 +277,7 @@ public class ARI {
      * @throws ARIException
      */
 
-    private static String doHttpGet(String urlWithParms, String user, String pwd) throws ARIException {
+    protected static String doHttpGet(String urlWithParms, String user, String pwd) throws ARIException {
         URL url = null;
         final String UTF8 = "UTF-8";
         try {
@@ -347,7 +347,7 @@ public class ARI {
      * @throws ARIException
      */
 
-    private static String findVersionString(String response) throws ARIException {
+    protected static String findVersionString(String response) throws ARIException {
         Pattern p = Pattern.compile(".apiVersion.:\\s*\"(.+?)\"", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE );
 
         Matcher m = p.matcher(response);
@@ -394,7 +394,7 @@ public class ARI {
      * unsubscribe from all resources of the stasis application 
      * @throws RestException
      */
-    private void unsubscribeApplication() throws RestException {
+    protected void unsubscribeApplication() throws RestException {
     	Application application = applications().get(appName);
     	// unsubscribe from all channels
     	for(int i = 0; i<application.getChannel_ids().size(); i++) {
@@ -421,7 +421,7 @@ public class ARI {
      * @throws IllegalArgumentException All clients should be of a known type. Let's play it safe.
      */
 
-    private void destroy( Object client ) {
+    protected void destroy( Object client ) {
         if ( client != null ) {
             if ( client instanceof NettyHttpClient ) {
                 NettyHttpClient nhc = (NettyHttpClient) client;
